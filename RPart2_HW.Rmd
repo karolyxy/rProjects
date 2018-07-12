@@ -29,7 +29,23 @@ Write your own code to implement the multiplication between a matrix and a vecto
 \begin{align}y[i] = \sum_{j=1}^nA[i,j]x[j] \text{ for } i = 1,2,3,...m\end{align}
 
 ```{r Question 2}
+Ax = matrix(c(1:9), ncol = 3, nrow = 3)
+x = c(1:3)
+y = numeric(nrow(Ax))
 
+matrix_mult <- function(mat, vec){
+  
+  row_c = nrow(mat)
+  res = numeric(row_c)
+  
+  for(i in 1:row_c){
+    res[i] = sum(mat[i, ]*vec);
+  }
+  
+  return(res)
+}
+
+matrix_mult(Ax, x)
 
 ```
 
@@ -91,7 +107,14 @@ Write an R function named `compare` which takes two words as arguments/inputs an
 "Not Equal Length"
 ```
 ```{r Question 6}
+compare <- function(x, y){
+  a = nchar(x)
+  b = nchar(y)
+  
+  ifelse(a == b, "Equal Length", "Not Equal Length")
+}
 
+compare("1111", "2222")
 ```
 
 ## Challenge Question:
