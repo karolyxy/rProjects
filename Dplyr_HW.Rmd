@@ -47,14 +47,16 @@ Continuing to use the `mpg` dataset, we want to know the relationship between th
 
 
 ```{r}
+
 ## 1, 2
 mpg %>%
   mutate(., ratioHVE = hwy/displ, ratioCVE = cty/displ) %>%
   select(., manufacturer, ratioCVE, ratioHVE)
 ## 3
 mpg %>%
+  mutate(., ratioHVE = hwy/displ, ratioCVE = cty/displ) %>%
   group_by(., year, manufacturer) %>%
-  summarise(., avg_hve = mean(hwy/displ), avg_cve = mean(cty/displ))
+  summarise(., avg_hve = mean(ratioHVE), avg_cve = mean(ratioCVE))
 
 ## 4
 mpg %>%
@@ -79,8 +81,61 @@ For this question, you are going to explore an online dataset and try to answer 
 
 ```{r}
 df <- read.csv('./NYC_Jobs.csv', stringsAsFactors = FALSE)
+#head(df)
 
-head(df)
+
+## 1 (a)
+# df %>%
+#   mutate(., high_sal = if_else(Salary.Frequency == "Annual", Salary.Range.To,
+#                                if_else(Salary.Frequency == "Hourly", Salary.Range.To*8*5*4*12,
+#                                        Salary.Range.To*5*4*12))) %>%
+#   mutate(., low_sal = if_else(Salary.Frequency == "Annual", Salary.Range.From,
+#                               if_else(Salary.Frequency == "Hourly", Salary.Range.From*8*5*4*12,
+#                                       Salary.Range.From*5*4*12))) %>%
+#   summarise(., mean(high_sal), median(high_sal), mean(low_sal), median(low_sal))
+
+# nyc_job1<- df %>%
+#   filter(., Salary.Frequency == "Hourly" | Salary.Frequency == "Annual" | Salary.Frequency == "Daily") %>%
+#   group_by(., Agency) %>%
+#   mutate(.,begin_sl=ifelse(Salary.Frequency=="Annual",
+#                            Salary.Range.From,
+#                            ifelse(Salary.Frequency=="Hourly",
+#                                   Salary.Range.From*8*5*4*12,
+#                                   Salary.Range.From*5*4*12))) %>%
+#   mutate(.,end_sl=ifelse(Salary.Frequency=="Annual",
+#                          Salary.Range.To,
+#                          ifelse(Salary.Frequency=="Hourly",
+#                                 Salary.Range.To*8*5*4*12,
+#                                 Salary.Range.To*5*4*12))) %>%
+#   summarise(., mean(high_sal), median(high_sal), mean(low_sal), median(low_sal))
+
+## 2
+df %>%
+  group_by(., df$Agency) %>%
+  summarise(.,avg_low = mean(Salary.Range.From)) %>%
+  arrange(., desc(avg_low)) %>%
+  top_n(1)
+
+## 3
+df %>%
+  mutate(., sal_range = Salary.Range.To - Salary.Range.From) %>% 
+  group_by(., Posting.Type) %>%
+  summarise(., mean(sal_range))
+
+## 4
+df %>%
+  group_by(., Level) %>%
+  mutate(., sal_range = Salary.Range.To - Salary.Range.From) %>% 
+  summarise(., avg_sal_range = mean(sal_range)) %>%
+  arrange(., desc(avg_sal_range)) 
+
+## 5
+df %>%
+  group_by(., Agency) %>%
+  mutate(., low_sal_total = X..Of.Positions*Salary.Range.From, hi_sal_total = X..Of.Positions*Salary.Range.To) %>%
+  summarise(., min_expenses = sum(low_sal_total), max_expenses = sum(hi_sal_total))
+   
+
 ```
 
 
